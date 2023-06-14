@@ -1,5 +1,8 @@
 import { shuffle } from './js/utils.mjs';
 
+let backTimer;
+let flgFirst = true;
+let cardFirst;
 const maxPair = 9;
 const cardImage = [];
 
@@ -26,10 +29,52 @@ function initialize() {
         div.classList.add('card', 'back');
         div.dataset.index = i;
         div.dataset.number = arr[i];
+        div.onclick = turn;
         panel.appendChild(div);
 
         const img = new Image();
         img.src = 'images/card'+ (arr[i] + 1) +'.png'
         cardImage.push(img);
+    }
+}
+
+function turn(e) {
+    const div = e.currentTarget;
+    
+    if (div.classList.contains('back')) {
+        // 裏向きのカードをクリックした場合
+        div.classList.remove('back');
+        div.appendChild(cardImage[div.dataset.index]);
+    } else {
+        // 表向きのカードはreturn
+        return;
+    }
+
+    if (flgFirst) {
+        // 1枚目の処理
+        cardFirst = div;
+        flgFirst = false;
+    } else {
+        // 2枚目の処理
+        if (cardFirst.dataset.number == div.dataset.number) {
+            // 数字が1枚目と一致する場合
+            backTimer = setTimeout(function () {
+                div.classList.add('finish');
+                cardFirst.classList.add('finish');
+                cardFirst = null;
+                backTimer = NaN;
+            }, 500);
+        } else {
+            // 一致しない場合
+            backTimer = setTimeout(function () {
+                div.classList.add('back');
+                div.innerHTML = '';
+                cardFirst.classList.add('back');
+                cardFirst.innerHTML = '';
+                cardFirst = null;
+                backTimer = NaN;
+            }, 500)
+        }
+        flgFirst = true;
     }
 }
