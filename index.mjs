@@ -40,6 +40,8 @@ function initialize() {
 
 function turn(e) {
     const div = e.currentTarget;
+
+    if (backTimer) return;
     
     if (div.classList.contains('back')) {
         // 裏向きのカードをクリックした場合
